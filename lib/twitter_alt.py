@@ -32,8 +32,7 @@ def make_twitter_string(
         f"{', '.join(cs)}\n\n" f"Negative prompt: {uc_str}\n\n" f"{', '.join(params)}"
     )
 
-    stats = f"original length: {len(prompt)}\n" \
-            f"new length: {len(try_assemble)}"
+    stats = f"original length: {len(prompt)}\n" f"new length: {len(try_assemble)}"
     return try_assemble, stats
     # print("D")
 

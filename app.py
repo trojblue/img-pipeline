@@ -2,48 +2,27 @@ import gradio as gr
 from gradio import TabbedInterface
 from gradio.components import *
 
-from lib.twitter_alt import make_twitter_string
-from lib.shuffle_tags import shuffle_string
+from pages.prompt_clean_page import get_prompt_clean_page
+from pages.prompt_shuffle_page import get_prompt_shuffle_page
+
 
 def calculate_text_length(text):
     return len(text)
 
 
 import pyperclip
+
+
 def copy_to_clipboard(text):
     pyperclip.copy(text)
 
+
 def get_interface() -> TabbedInterface:
-
-    txt_interface = gr.Interface(
-        make_twitter_string,
-        inputs=[
-            gr.TextArea(placeholder="prompt"),
-            gr.Checkbox(label="No model name", value=True),
-            gr.Checkbox(label="No artists", value=True),
-            gr.Checkbox(label="No seed"),
-            gr.Checkbox(label="SHORTER"),
-            gr.Checkbox(label="EVEN SHORTER"),
-        ],
-        outputs=[
-            gr.TextArea(placeholder="new prompt"),
-            gr.TextArea(placeholder="stats"),
-        ],
-
-    )
-
-    shuffle_interface = gr.Interface(
-        shuffle_string,
-        inputs=[
-            gr.TextArea(placeholder="prompt"),
-        ],
-        outputs=[
-            gr.TextArea(placeholder="new prompt")
-        ],
-    )
+    prompt_clean_page = get_prompt_clean_page()
+    shuffle_interface = get_prompt_shuffle_page()
 
     demo = gr.TabbedInterface(
-        [txt_interface, shuffle_interface], ["tag_string_clean", "Text-to-speech"]
+        [prompt_clean_page, shuffle_interface], ["tag_string_clean", "Text-to-speech"]
     )
     return demo
 
@@ -54,5 +33,5 @@ if __name__ == "__main__":
         server_port=7866,
         debug=True,
         server_name="0.0.0.0",
-        favicon_path="./bin/favicon.ico"
+        favicon_path="./bin/favicon.ico",
     )
