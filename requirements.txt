@@ -1,0 +1,6 @@
+gradio
+ImageHash
+Pillow
+pyperclip
+tomli
+webuiapi

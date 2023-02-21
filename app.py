@@ -2,10 +2,11 @@ import gradio as gr
 from gradio import TabbedInterface
 from gradio.components import *
 
+from pages.img_collage_page import get_img_collage_page
 from pages.prompt_clean_page import get_prompt_clean_page
 from pages.prompt_shuffle_page import get_prompt_shuffle_page
 from pages.img_clean_page import get_img_clean_page
-
+from pages.prompt_gen_page import get_prompt_gen_page
 
 def calculate_text_length(text):
     return len(text)
@@ -19,13 +20,16 @@ def copy_to_clipboard(text):
 
 
 def get_interface() -> TabbedInterface:
-    prompt_clean_page = get_prompt_clean_page()
-    shuffle_page = get_prompt_shuffle_page()
     img_page = get_img_clean_page()
+    prompt_clean_page = get_prompt_clean_page()
+    img_collage_page = get_img_collage_page()
+    gen_page = get_prompt_gen_page()
+    shuffle_page = get_prompt_shuffle_page()
+
 
     demo = gr.TabbedInterface(
-        [img_page, prompt_clean_page, shuffle_page],
-        ["image page", "clean prompt", "shuffle tags"],
+        [img_page, gen_page, img_collage_page, prompt_clean_page, shuffle_page],
+        ["upscale", "gen prompt", "gen collage", "clean prompt", "shuffle tags"],
     )
     return demo
 

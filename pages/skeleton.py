@@ -1,8 +1,13 @@
 import gradio as gr
 from lib.text import make_twitter_string
-
+from lib.utils import *
+from typing import *
 
 def get_prompt_clean_page():
+
+    cfg = load_configs()
+
+
     page = gr.Interface(
         make_twitter_string,
         inputs=[

@@ -1,4 +1,14 @@
 
+prompt_in_dir = "D:/Andrew/Pictures/==train/t32.TXT"
+
 img_in_dir = 'O:/==IMGOPS/in'
 img_out_dir = 'O:/==IMGOPS/out'
 img_save_dir = "O:/==IMGOPS/save"
+
+
+
+# prompt settings
+[prompt]
+start_tags = "best quality"
+end_tags = ""
+vital_tags = ""

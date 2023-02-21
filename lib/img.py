@@ -50,6 +50,13 @@ def do_before_upload(html, dir_in, dir_out, img_files):
 
 
 def upscale_and_save(dir_out, img_files):
+    """
+
+    :param dir_out:
+    :param img_files: a list of PIL.Image files
+    :return:
+    :rtype:
+    """
     # https://github.com/mix1009/sdwebuiapi
     api = webuiapi.WebUIApi()
     upscale_results = api.extra_batch_images(images=img_files,
@@ -66,4 +73,5 @@ def upscale_and_save(dir_out, img_files):
         upscaled_files.append(filename)
         # print(img)
         img.save(filename)
+
     return upscaled_files
