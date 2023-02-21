@@ -1,9 +1,7 @@
-try:
-    import lib.bin_loader as loader
-except ModuleNotFoundError:
-    import bin_loader as loader
-
+import random
 from itertools import chain
+
+from lib import bin_loader as loader
 
 
 def make_twitter_string(
@@ -35,15 +33,3 @@ def make_twitter_string(
     stats = f"original length: {len(prompt)}\n" f"new length: {len(try_assemble)}"
     return try_assemble, stats
     # print("D")
-
-
-def get_sample_txt():
-    with open("sample_text.txt", "r") as f:
-        text = f.readlines()
-        return "".join(text)
-
-
-if __name__ == "__main__":
-    text_str = get_sample_txt()
-
-    # make_twitter_string(text_str)

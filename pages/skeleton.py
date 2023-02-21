@@ -1,5 +1,5 @@
 import gradio as gr
-from lib.twitter_alt import make_twitter_string
+from lib.text import make_twitter_string
 
 
 def get_prompt_clean_page():

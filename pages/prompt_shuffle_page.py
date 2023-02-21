@@ -1,5 +1,12 @@
 import gradio as gr
-from lib.shuffle_tags import shuffle_string
+import random
+
+
+def shuffle_string(prompt: str):
+    p_list = [i.strip() for i in prompt.split(",")]
+
+    random.shuffle(p_list)
+    return ", ".join(p_list)
 
 
 def get_prompt_shuffle_page():
