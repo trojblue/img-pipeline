@@ -76,7 +76,7 @@ def train(src_dir):
 
     train_loader = DataLoader(
         train_dataset,
-        batch_size=30,
+        batch_size=400,
         shuffle=True,
         num_workers=4,
         pin_memory=True,
@@ -84,7 +84,7 @@ def train(src_dir):
     )
 
     # Train loop with progress bar
-    num_epochs = 10
+    num_epochs = 100
     for epoch in range(num_epochs):
         # Initialize progress bar
         progress_bar = tqdm(train_loader, desc=f'Epoch {epoch + 1}/{num_epochs}')
@@ -109,50 +109,14 @@ def train(src_dir):
     with open ("vocab.json", "w") as f:
         json.dump(tag_to_index, f, indent=2)
 
-def inference(num_tags):
-    # Load saved model
-    loaded_model = TagExpansionModel(num_tags=num_tags, embedding_dim=32, hidden_dim=64)
-    loaded_model.load_state_dict(torch.load('tag_expansion_model.pth'))
 
-    with open ("vocab.json", "r") as f:
-        tag_to_index = json.load(f)
+def inference(top_k = 10):
 
-    # Demo inference
-    input_tags = torch.tensor([tag_to_index['1girl'], tag_to_index['long hair']])
-    with torch.no_grad():
-        output_probs = F.softmax(loaded_model(input_tags), dim=-1)
-        top_indices = output_probs.topk(k=3).indices.squeeze().tolist()
-
-    print('Input tags:', [list(tag_to_index.keys())[list(tag_to_index.values()).index(idx)] for idx in input_tags])
-    print('Predicted tags:', [list(tag_to_index.keys())[list(tag_to_index.values()).index(idx)] for idx in top_indices])
-
-
-def inf2():
-    import json
-    import torch
-
-    # Load the trained model and tag vocabulary
-    model = TagExpansionModel(num_tags=10, embedding_dim=32, hidden_dim=64)
-    model.load_state_dict(torch.load('tag_expansion_model.pth'))
+    # load json
     with open("vocab.json", "r") as f:
         tag_to_index = json.load(f)
-    index_to_tag = {i: tag for tag, i in tag_to_index.items()}
+    num_tags = len(tag_to_index)
 
-    # Define a list of input tags
-    input_tags = ['A', 'B', 'C']
-
-    # Convert input tags to indices
-    input_indices = [tag_to_index[tag] for tag in input_tags]
-    input_tensor = torch.tensor(input_indices).unsqueeze(0)
-
-    # Generate output tags using the model
-    output_indices = model.generate(input_tensor)
-    output_tags = [index_to_tag[i.item()] for i in output_indices.squeeze()]
-
-    print("Input tags:", input_tags)
-    print("Expanded tags:", output_tags)
-
-def inference2(num_tags):
     # Load saved model
     loaded_model = TagExpansionModel(num_tags=num_tags, embedding_dim=32, hidden_dim=64)
     loaded_model.load_state_dict(torch.load('tag_expansion_model.pth'))
@@ -161,19 +125,24 @@ def inference2(num_tags):
         tag_to_index = json.load(f)
 
     # Demo inference
-    input_tags = ['1girl', 'long hair']
-    input_indices = [tag_to_index[tag] for tag in input_tags]
-    input_tensor = torch.tensor(input_indices).unsqueeze(0)
-    with torch.no_grad():
-        output_probs = F.softmax(loaded_model(input_tensor), dim=-1)
-        top_indices = output_probs.topk(k=3).indices.squeeze().tolist()
+    while True:
+        tag_str = input("input tags:")
+        tag_list = [i.strip() for i in tag_str.split(",")]
+        # input_tags = ['1girl', 'long hair']
+        input_tags = tag_list
+        input_indices = [tag_to_index[tag] for tag in input_tags]
+        input_tensor = torch.tensor(input_indices).unsqueeze(0)
+        with torch.no_grad():
+            output_probs = F.softmax(loaded_model(input_tensor), dim=-1)
+            top_indices = output_probs.topk(k=top_k).indices.squeeze().tolist()
 
-    print('Input tags:', input_tags)
-    print('Predicted tags:', [list(tag_to_index.keys())[list(tag_to_index.values()).index(idx)] for idx in top_indices])
+        print('Input tags:', input_tags)
+        print('Predicted tags:', [tag for idx in top_indices for tag, index in tag_to_index.items() if index == idx]
+        )
 
 
 if __name__ == '__main__':
     # src_dir = input("src_dir:")
     src_dir = "D:\Andrew\Pictures\==train\\t32.TXT"
-    train(src_dir)
-    # inference2(15314)
+    # train(src_dir)
+    inference()
