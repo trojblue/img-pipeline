@@ -5,12 +5,13 @@ import imagehash
 from lib.text import make_twitter_string
 from lib.utils import *
 from typing import *
+import lib.img
 import sdtools.fileops as fops
 import sdtools.txtops as tops
 from PIL import Image, ImageOps
 
 
-def concat_images(images, x_count, y_count):
+def concat_images2(images, x_count, y_count):
 
     # Open images and resize them
     pil_images = [Image.open(i) for i in images]
@@ -63,15 +64,16 @@ def get_img_collage_page():
             )
 
 
-    x_count = gr.Slider(-1, 8, label="x axis", value=-1, step=1)
-    y_count = gr.Slider(-1, 8, label="y axis", value=-1, step=1)
+    xy = gr.Text(label="xy", value="x")
+    xy_len = gr.Slider(-1, 8, label="xy len", value=-1, step=1)
+    tag_str = gr.Text(label="tags")
 
 
     page = gr.Interface(
-        concat_images,
+        lib.img.concat_images,
 
         inputs=[
-            file, x_count, y_count
+            file, xy, xy_len, tag_str
         ],
         outputs=[
             gr.Image(interactive=True),

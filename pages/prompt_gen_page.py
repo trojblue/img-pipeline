@@ -21,13 +21,7 @@ def gen_prompt(src_dir,
         curr_src_dir = src_dir
 
     if original_prompt: # 训练集原文复制黏贴
-        lines = random.choices(txt_lines, k=line_count)
-        lines = [', '.join(i) for i in lines]
-        # print(lines)
-        info = f"{line_count} tags generated\n" \
-               f"average char count: {sum([len(i) for i in lines]) / line_count}"
-
-        return "\n".join(lines), info
+        return fetch_original_prompt(start_tags, end_tags, line_count, txt_lines)
 
     config = {
         "start_tags": tag_str_to_list(start_tags),    # 一定出现, 保证开头
@@ -48,9 +42,24 @@ def gen_prompt(src_dir,
         prompts.append(prompt_str)
 
     info = f"{line_count} tags generated\n" \
-           f"average char count: {sum([len(i) for i in prompts])/line_count}"
+           f"average char count: {int(sum([len(i) for i in prompts])/line_count)}"
 
     return "\n".join(prompts), info
+
+
+def fetch_original_prompt(start_tags:str, end_tags:str, line_count:int, txt_lines:List):
+    """
+    """
+    lines = random.choices(txt_lines, k=line_count)
+
+    lines = [', '.join([start_tags] + i + [end_tags])
+             for i in lines]
+
+    info = f"{line_count} tags generated\n" \
+           f"average char count: {sum([len(i) for i in lines]) / line_count}"
+
+    new_tag =  "\n".join(lines)
+    return new_tag, info
 
 
 def tag_str_to_list(tag_str:str) -> List[str]:
