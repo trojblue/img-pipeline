@@ -3,13 +3,16 @@ from lib.text import make_twitter_string
 from lib.utils import *
 from typing import *
 
+def process_req():
+    return "blah", "blah"
+
 def get_prompt_clean_page():
 
     cfg = load_configs()
 
 
     page = gr.Interface(
-        make_twitter_string,
+        process_req,
         inputs=[
             gr.TextArea(placeholder="prompt"),
             gr.Checkbox(label="No model name", value=True),
