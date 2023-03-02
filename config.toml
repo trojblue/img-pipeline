@@ -5,10 +5,13 @@ img_in_dir = 'O:/==IMGOPS/in'
 img_out_dir = 'O:/==IMGOPS/out'
 img_save_dir = "O:/==IMGOPS/save"
 
-
-
 # prompt settings
 [prompt]
 start_tags = "best quality"
 end_tags = ""
 vital_tags = ""
+
+# tag expansion
+[inference]
+lstm_model_path = "extensions/tag_expansion/tag_expansion_model.pth"
+lstm_vocab_path = "extensions/tag_expansion/vocab.json"
