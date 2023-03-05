@@ -210,7 +210,7 @@ def inference(top_k = 10):
         print('Predicted tags:', [tag for idx in top_indices for tag, index in tag_to_index.items() if index == idx]
         )
 
-def load_model(vocab_file=None, model_file=None):
+def load_model(vocab_file=None, model_file=None, embedding_dim=64, hidden_dim=128):
     """
     从文件路径读取模型, 返回tag_to_index, loaded_model
     :param vocab_file: vocab.json

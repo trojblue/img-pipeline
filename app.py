@@ -8,6 +8,7 @@ from pages.prompt_shuffle_page import get_prompt_shuffle_page
 from pages.img_clean_page import get_img_clean_page
 from pages.prompt_gen_page import get_prompt_gen_page
 from pages.lstm_expand_page import get_lstm_expand_page
+from pages.img_lookup_page import get_img_lookup_page
 
 def calculate_text_length(text):
     return len(text)
@@ -27,11 +28,12 @@ def get_interface() -> TabbedInterface:
     gen_page = get_prompt_gen_page()
     shuffle_page = get_prompt_shuffle_page()
     lstm_page = get_lstm_expand_page()
+    img_lookup_page = get_img_lookup_page()
 
 
     demo = gr.TabbedInterface(
-        [img_page, gen_page, img_collage_page, prompt_clean_page, shuffle_page, lstm_page],
-        ["upscale", "gen prompt", "gen collage", "clean prompt", "shuffle tags", "lstm"],
+        [img_page, gen_page, img_collage_page, prompt_clean_page, shuffle_page, lstm_page, img_lookup_page],
+        ["upscale", "gen prompt", "gen collage", "clean prompt", "shuffle tags", "lstm", "img_lookup_page"],
     )
     return demo
 

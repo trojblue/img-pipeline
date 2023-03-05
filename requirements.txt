@@ -6,3 +6,4 @@ tomli
 webuiapi
 tensorboard
 pytorch
+toml

@@ -13,5 +13,5 @@ vital_tags = ""
 
 # tag expansion
 [inference]
-lstm_model_path = "extensions/tag_expansion/tag_expansion_model.pth"
+lstm_model_path = "extensions/tag_expansion/tag_expansion_model_epoch220.pth"
 lstm_vocab_path = "extensions/tag_expansion/vocab.json"

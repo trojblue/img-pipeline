@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../expander/.idea/expander.iml" filepath="$PROJECT_DIR$/../expander/.idea/expander.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/img-pipeline.iml" filepath="$PROJECT_DIR$/.idea/img-pipeline.iml" />
       <module fileurl="file://$PROJECT_DIR$/../sdtools-troph/.idea/sdtools-troph.iml" filepath="$PROJECT_DIR$/../sdtools-troph/.idea/sdtools-troph.iml" />
     </modules>
