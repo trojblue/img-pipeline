@@ -7,16 +7,15 @@ import torch.cuda
 import sdtools.txtops as tops
 from torch.utils.data import Dataset, DataLoader
 from tqdm.auto import tqdm
-
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 import torch.nn.functional as F
 from torch.optim.lr_scheduler import CosineAnnealingWarmRestarts
 from torch.optim import AdamW
-
+import random
 
 class TagExpansionModel(nn.Module):
-    def __init__(self, num_tags, embedding_dim, hidden_dim, num_layers=4, dropout=0.2):
+    def __init__(self, num_tags, embedding_dim, hidden_dim, num_layers=4, dropout=0.15):
         super(TagExpansionModel, self).__init__()
         self.embedding = nn.Embedding(num_tags, embedding_dim)
         self.lstm = nn.LSTM(
@@ -27,31 +26,57 @@ class TagExpansionModel(nn.Module):
             bidirectional=True,
             dropout=dropout
         )
-        self.linear = nn.Linear(hidden_dim * 2, num_tags)
+        self.mlp = nn.Sequential(
+            nn.Linear(hidden_dim * 2, hidden_dim),
+            nn.GELU(),
+            nn.Dropout(p=dropout),
+            nn.Linear(hidden_dim, num_tags)
+        )
+
 
     def forward(self, input_tags):
         embedded = self.embedding(input_tags)
         output, (hidden, cell) = self.lstm(embedded)
         hidden = torch.cat([hidden[-2], hidden[-1]], dim=1)
-        logits = self.linear(hidden)
+        logits = self.mlp(hidden)
         return logits
 
 
+
 class TagsDataset(Dataset):
-    def __init__(self, folder_path, num_tags, tag_to_index, max_tag_len):
-        self.folder_path = folder_path
+    def __init__(self, file_path, num_tags, tag_to_index, max_tag_len):
+        self.file_path = file_path
         self.num_tags = num_tags
         self.tag_to_index = tag_to_index
         self.max_tag_len = max_tag_len
 
-        self.file_list = os.listdir(folder_path)
+        with open(file_path, 'r') as f:
+            self.lines = f.readlines()
         self.tag_indices = []
 
 
+    def shuffle_tags(self, tags, prob, place):
+        # Split the tags into a list
+        tag_list = tags.split(', ')
+
+        # Shuffle each tag with probability prob
+        for i in range(len(tag_list)):
+            if random.random() < prob:
+                # Choose a random distance to shuffle
+                shuffle_dist = random.randint(1, place)
+
+                # Calculate the new index for the tag
+                new_index = min(max(0, i + random.randint(-shuffle_dist, shuffle_dist)), len(tag_list) - 1)
+
+                # Swap the tags
+                tag_list[i], tag_list[new_index] = tag_list[new_index], tag_list[i]
+
+        # Join the tags back into a comma-separated string
+        return ', '.join(tag_list)
     def __getitem__(self, index):
-        file_path = os.path.join(self.folder_path, self.file_list[index])
-        with open(file_path, 'r') as f:
-            tags = f.readline().strip().split(', ')
+        line = self.lines[index].strip()
+        line = self.shuffle_tags(line, 0.2, 1)
+        tags = line.split(', ')
 
         # Convert tags to indices
         tag_indices = [self.tag_to_index[tag] for tag in tags]
@@ -67,16 +92,20 @@ class TagsDataset(Dataset):
         return input_tags, target_tag
 
     def __len__(self):
-        return len(self.file_list)
+        return len(self.lines)
 
 
+from torch.optim.lr_scheduler import CosineAnnealingWarmRestarts
 
-def train(src_dir):
+def train(data_path):
+    import wandb
+    wandb.init(project='tag_expansion')
+
     # Load tag vocabulary
     tag_vocab = set()
-    for filename in os.listdir(src_dir):
-        with open(os.path.join(src_dir, filename), 'r') as f:
-            tags = f.readline().strip().split(', ')
+    with open(data_path, 'r') as f:
+        for line in f:
+            tags = line.strip().split(', ')
             tag_vocab.update(tags)
 
     # Create tag-to-index mapping
@@ -87,13 +116,14 @@ def train(src_dir):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model = TagExpansionModel(num_tags=num_tags, embedding_dim=64, hidden_dim=128).to(device)
     optimizer = AdamW(model.parameters())
+    scheduler = CosineAnnealingWarmRestarts(optimizer, T_0=2, T_mult=2)
 
     # Create DataLoader for training data on CUDA device
-    train_dataset = TagsDataset(src_dir, num_tags, tag_to_index, max_tag_len=50)
+    train_dataset = TagsDataset(data_path, num_tags, tag_to_index, max_tag_len=60)
 
     train_loader = DataLoader(
         train_dataset,
-        batch_size=600,
+        batch_size=704,
         shuffle=True,
         num_workers=6,
         pin_memory=True,
@@ -103,13 +133,17 @@ def train(src_dir):
     # Train loop with progress bar
     num_epochs = 500
 
-    # Set up TensorBoard writer
-    writer = SummaryWriter(log_dir='D:\CSC3\img-pipeline\_tensor_logs')
-
-    # Set up CosineAnnealingWarmRestarts scheduler
-    T_0 = 10
-    T_mult = 2
-    scheduler = CosineAnnealingWarmRestarts(optimizer, T_0, T_mult)
+    # Set up wandb
+    wandb.watch(model)
+    wandb.config.update({
+        'num_epochs': num_epochs,
+        'batch_size': 704,
+        'num_workers': 6,
+        'learning_rate': 1e-3,
+        'max_tag_len': 60,
+        'embedding_dim': 128,
+        'hidden_dim': 256
+    })
 
     for epoch in range(num_epochs):
         # Initialize progress bar
@@ -123,26 +157,25 @@ def train(src_dir):
             loss = F.cross_entropy(logits, target_tag)
             loss.backward()
             optimizer.step()
+            scheduler.step()
 
-            # Log loss to TensorBoard
-            writer.add_scalar('Loss/train', loss.item(), epoch * len(train_loader) + batch_idx)
+            # Log loss and learning rate to wandb
+            wandb.log({'train_loss': loss.item(), 'epoch': epoch, 'lr': optimizer.param_groups[0]['lr']})
 
             # Update progress bar with loss value
-            progress_bar.set_postfix({'loss': loss.item()})
+            progress_bar.set_postfix({'loss': loss.item(), 'lr': optimizer.param_groups[0]['lr']})
 
         # Close progress bar
         progress_bar.close()
 
-        # Step the scheduler
-        scheduler.step()
+        if epoch % 20 == 0:
+            # Save model and tag-to-index mapping
+            torch.save(model.state_dict(), f'tag_expansion_model_epoch{epoch}.pth')
+            with open ("vocab.json", "w") as f:
+                json.dump(tag_to_index, f, indent=2)
 
-    # Save model and tag-to-index mapping
-    torch.save(model.state_dict(), 'tag_expansion_model.pth')
-    with open ("vocab.json", "w") as f:
-        json.dump(tag_to_index, f, indent=2)
-
-    # Close TensorBoard writer
-    writer.close()
+    # Close wandb
+    wandb.finish()
 
 
 
@@ -153,9 +186,10 @@ def inference(top_k = 10):
         tag_to_index = json.load(f)
     num_tags = len(tag_to_index)
 
+    global model_path
     # Load saved model
-    loaded_model = TagExpansionModel(num_tags=num_tags, embedding_dim=64, hidden_dim=128)
-    loaded_model.load_state_dict(torch.load('tag_expansion_model.pth'))
+    loaded_model = TagExpansionModel(num_tags=num_tags, embedding_dim=embedding_dim, hidden_dim=hidden_dim)
+    loaded_model.load_state_dict(torch.load(model_path))
 
     with open("vocab.json", "r") as f:
         tag_to_index = json.load(f)
@@ -184,7 +218,7 @@ def load_model(vocab_file=None, model_file=None):
     :return:
     :rtype:
     """
-
+    global model_path
     # load json
     vocab_path = vocab_file if vocab_file else "vocab.json"
     with open(vocab_path, "r") as f:
@@ -192,9 +226,9 @@ def load_model(vocab_file=None, model_file=None):
     num_tags = len(tag_to_index)
 
     # Load saved model
-    model_path = model_file if model_file else "tag_expansion_model.pth"
-    loaded_model = TagExpansionModel(num_tags=num_tags, embedding_dim=64, hidden_dim=128)
-    loaded_model.load_state_dict(torch.load(model_path))
+    model_path = model_file if model_file else model_path
+    loaded_model = TagExpansionModel(num_tags=num_tags, embedding_dim=embedding_dim, hidden_dim=hidden_dim)
+    loaded_model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
 
     return tag_to_index, loaded_model
 
@@ -227,7 +261,19 @@ def inference_lstm_gradio(tag_to_index, loaded_model, input_tags, top_k:int=15):
     return top_tags
 
 
+# model_path = "tag_expansion_model_epoch480.pth"
+model_path = "tag_expansion_model.pth"
+
+
 if __name__ == '__main__':
     src_dir = "D:\Andrew\Pictures\==train\\t32.TXT"
-    # train(src_dir)
+
+    src_file = "D:\CSC3\expander\\tag_only.txt"
+    # train(src_file)
+    # embedding_dim = 128
+    # hidden_dim = 256
+
+    embedding_dim = 64
+    hidden_dim = 128
+
     inference()
