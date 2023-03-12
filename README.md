@@ -2,15 +2,17 @@
 from webui to pixiv
 
 
-## process
+## Tools
 
-`./dump`: dump your images here. images will be moved to `./uped` once it's been upscaled
+Prompting:
+- random prompt (from txt / from danbooru word freq / from lstm)
+- shuffle tags
+- twitter prompt clean (for fitting in 1000 chars)
+- prompt SR quick replace
 
-`uped`: original images that have been upscaled
+Workflow orchestration:
+- Superresolution
+- gen collage
 
-`2xog`: original upscaled images to keep
-
-`2xclean`: cleaned images (with cleaned png info) for uploading
-
-
-co-authored by :ChatGPT & friends (https://chat.forchange.cn/)
+Training:
+- reverse lookup
