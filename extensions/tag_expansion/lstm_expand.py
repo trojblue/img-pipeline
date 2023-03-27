@@ -8,7 +8,7 @@ import sdtools.txtops as tops
 from torch.utils.data import Dataset, DataLoader
 from tqdm.auto import tqdm
 from torch.utils.data import DataLoader
-from torch.utils.tensorboard import SummaryWriter
+# from torch.utils.tensorboard import SummaryWriter
 import torch.nn.functional as F
 from torch.optim.lr_scheduler import CosineAnnealingWarmRestarts
 from torch.optim import AdamW

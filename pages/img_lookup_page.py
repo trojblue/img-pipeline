@@ -8,9 +8,9 @@ from extensions.img_lookup.fetch_tags import handle_gradio_req
 def do_lookup(img_dir, pixiv_token, danbooru_token, danbooru_username):
 
     get_console_msg("INFO", "task started")
-    handle_gradio_req(img_dir, pixiv_token, danbooru_token, danbooru_username)
+    return_val = handle_gradio_req(img_dir, pixiv_token, danbooru_token, danbooru_username)
 
-    return get_console_msg("INFO", f"task done: {img_dir}")
+    return get_console_msg("INFO", f"task done: {img_dir} \n {return_val}")
 
 
 

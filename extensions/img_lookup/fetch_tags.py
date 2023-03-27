@@ -15,6 +15,7 @@ from lxml import html
 from PIL import Image
 from tqdm.auto import tqdm
 from extensions.img_lookup.customs import *
+from lib.utils import *
 
 
 import os
@@ -221,8 +222,11 @@ import toml
 
 api = AppPixivAPI()
 
-def handle_gradio_req(src_dir, dd_api_key, dd_username, px_refresh_token):
-    api.auth(refresh_token=px_refresh_token)
+def handle_gradio_req(src_dir, px_refresh_token, dd_api_key, dd_username):
+    try:
+        api.auth(refresh_token=px_refresh_token)
+    except Exception as e:
+        return get_console_msg("ERROR", f"pixiv API auth failed: {e}")
 
     DD_API_KEY = dd_api_key
     DD_USER_NAME = dd_username
@@ -231,6 +235,7 @@ def handle_gradio_req(src_dir, dd_api_key, dd_username, px_refresh_token):
     LONG_SIDE = args.iqdb_long_side
     MD5_PREFER_FNAME = args.md5_prefer_fname
     asyncio.run(main(src_dir, args.iqdb_concurrency, args.danbooru_concurrency, args.retry_nomatch))
+    return "DONE"
 
 
 if __name__ == '__main__':

@@ -38,7 +38,7 @@ def gen_prompt(src_dir,
         if underline:
             prompt_list = [i.replace(" ", "_") for i in prompt_list]
 
-        prompt_str = ", ".join(prompt_list)
+        prompt_str = ", ".join([p for p in prompt_list if p])
         prompts.append(prompt_str)
 
     info = f"{line_count} tags generated\n" \

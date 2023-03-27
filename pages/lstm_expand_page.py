@@ -49,7 +49,8 @@ def get_lstm_expand_page():
                                 lines=2
                                   )
     bad_tag_str = gr.TextArea(placeholder="bad_tags", label= "bad tags",
-                              value="1boy, string bikini, english text, making of available, frilled sleeves",
+                              value="1boy, string bikini, english text, making of available, tears, no pants, ass, half-closed eyes,"
+                                    "black panties, blood",
                               lines=2
                               )
 

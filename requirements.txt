@@ -4,6 +4,7 @@ Pillow
 pyperclip
 tomli
 webuiapi
-tensorboard
 pytorch
 toml
+lxml
+pixivpy3
