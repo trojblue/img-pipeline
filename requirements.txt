@@ -4,7 +4,9 @@ Pillow
 pyperclip
 tomli
 webuiapi
-pytorch
+# pytorch
 toml
 lxml
 pixivpy3
+requests
+beautifulsoup4
