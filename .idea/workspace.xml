@@ -6,12 +6,8 @@
   <component name="BlackConnectSettings" triggerOnReformat="true" />
   <component name="ChangeListManager">
     <list default="true" id="350e1de6-2e81-4b45-a68d-21f264864fa1" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/extensions/img_resize/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/extensions/img_resize/resizer.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pages/img_compress_page.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/extensions/img_downloader/gelbooru_downloader.py" beforeDir="false" afterPath="$PROJECT_DIR$/extensions/img_downloader/gelbooru_downloader.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/extensions/img_resize/resizer.py" beforeDir="false" afterPath="$PROJECT_DIR$/extensions/img_resize/resizer.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -225,7 +221,7 @@
       <workItem from="1679319133321" duration="1000" />
       <workItem from="1679520504581" duration="23000" />
       <workItem from="1679520537615" duration="204000" />
-      <workItem from="1679938342250" duration="23644000" />
+      <workItem from="1679938342250" duration="25527000" />
     </task>
     <servers />
   </component>
@@ -290,6 +286,16 @@
           <line>27</line>
           <option name="timeStamp" value="94" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/extensions/img_resize/resizer.py</url>
+          <line>146</line>
+          <option name="timeStamp" value="101" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/extensions/img_resize/resizer.py</url>
+          <line>137</line>
+          <option name="timeStamp" value="103" />
+        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
     <watches-manager>
@@ -308,7 +314,7 @@
     <SUITE FILE_PATH="coverage/img_pipeline$artist_finder.coverage" NAME="artist_finder Coverage Results" MODIFIED="1679967292509" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/extensions/artist_lookup" />
     <SUITE FILE_PATH="coverage/img_pipeline$seq2seq.coverage" NAME="seq2seq Coverage Results" MODIFIED="1677970374720" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../expander" />
     <SUITE FILE_PATH="coverage/img_pipeline$try_nn__1_.coverage" NAME="try_nn (1) Coverage Results" MODIFIED="1677713752534" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/extensions/tag_expansion" />
-    <SUITE FILE_PATH="coverage/img_pipeline$resizer.coverage" NAME="resizer Coverage Results" MODIFIED="1679992291801" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/extensions/img_resize" />
+    <SUITE FILE_PATH="coverage/img_pipeline$resizer.coverage" NAME="resizer Coverage Results" MODIFIED="1679994141179" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/extensions/img_resize" />
     <SUITE FILE_PATH="coverage/img_pipeline$prompt_sr_page.coverage" NAME="prompt_sr_page Coverage Results" MODIFIED="1678058775794" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/pages" />
     <SUITE FILE_PATH="coverage/img_pipeline$driver.coverage" NAME="driver Coverage Results" MODIFIED="1679988288458" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/extensions/img_downloader" />
     <SUITE FILE_PATH="coverage/img_pipeline$debug.coverage" NAME="debug Coverage Results" MODIFIED="1676973068221" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
