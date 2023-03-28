@@ -18,7 +18,7 @@ def get_dummy_pixiv_dict(j: Dict):
     return return_dict
 
 
-def build_pixiv_dict_from_j(j: Dict, api):
+def build_pixiv_dict_from_j(j: Dict, api, fake: bool = False):
     """查找对应pixiv illust页面; 返回px数据集格式的illust json:
     {
         'id': int
@@ -30,7 +30,7 @@ def build_pixiv_dict_from_j(j: Dict, api):
     """
     pixiv_id = j.get("pixiv_id", None)
 
-    if pixiv_id:
+    if pixiv_id and not fake:
         illust_json = api.illust_detail(str(pixiv_id)).get("illust", None)
         if illust_json:
             illust_json["danbooru"] = j

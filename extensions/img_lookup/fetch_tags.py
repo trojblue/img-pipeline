@@ -1,3 +1,6 @@
+import time
+import random
+
 import aiohttp
 import argparse
 import asyncio
@@ -30,6 +33,8 @@ UA = 'Mozilla/4.08 (compatible; MSIE 6.0; Windows NT 5.1)'
 known_img_suffix = set(['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'tiff', 'tif'])
 md5_m = re.compile(r'(?<![a-zA-Z0-9])([0-9a-fA-F]{32})(?![a-zA-Z0-9])')
 pid_m = re.compile(r'(?<![a-zA-Z0-9])(\d+_p\d+)(?![a-zA-Z0-9])')
+
+
 
 
 def async_retry(timeout: float = 1, backoff: float = 2, max_retry: int = 5):
@@ -123,6 +128,21 @@ async def pidstr_lookup(sess: aiohttp.ClientSession, path: Path, sema: Semaphore
             return j
 
 
+async def resize_image_if_necessary(image: Image.Image) -> bytes:
+    h, w = image.size
+    resize_ratio = LONG_SIDE / max(h, w)
+
+    if resize_ratio < 1:
+        nh, nw = int(h * resize_ratio), int(w * resize_ratio)
+        image = image.resize((nw, nh), Image.Resampling.BICUBIC)
+
+    img_bytes = io.BytesIO()
+    fmt = 'JPEG' if image.mode == 'RGB' else 'PNG'
+    image.save(img_bytes, format=fmt, quality=90)
+
+    return img_bytes.getvalue()
+
+
 @async_retry(max_retry=7, timeout=1, backoff=2)
 async def iqdb_lookup(
     sess: aiohttp.ClientSession,
@@ -160,17 +180,18 @@ async def iqdb_lookup(
     return j
 
 
+
 async def lookup(sess: aiohttp.ClientSession, path: Path, sema_iqdb: Semaphore, sema_danbooru: Semaphore):
-    j = await pidstr_lookup(sess, path, sema_danbooru)
+    j = await md5_lookup(sess, path, sema_danbooru)
     if not j:
-        j = await md5_lookup(sess, path, sema_danbooru)
-        if not j:
-            j = await iqdb_lookup(sess, path, sema_iqdb, sema_danbooru)
+        j = await iqdb_lookup(sess, path, sema_iqdb, sema_danbooru)
+        # if not j:
+        #     j = await pidstr_lookup(sess, path, sema_danbooru)
 
     if not j:
         return None
 
-    j_d = build_pixiv_dict_from_j(j, api)
+    j_d = build_pixiv_dict_from_j(j, api, fake=True)
 
     return j_d
 
@@ -192,6 +213,8 @@ async def lookup_and_save(
     if pbar is not None:
         pbar.update(1)
 
+    time.sleep(random.random() * 0.5)
+
 
 def get_args():
     parser = argparse.ArgumentParser()
@@ -209,9 +232,10 @@ async def main(path: str | Path, iqdb_concurrency=2, danbooru_concurrency=2, ret
     if not imgs:
         print('All metadata fetched.')
         return
+
+    sess = aiohttp.ClientSession(headers={'User-Agent': UA})
     sema_iqdb = Semaphore(iqdb_concurrency)
     sema_danbooru = Semaphore(danbooru_concurrency)
-    sess = aiohttp.ClientSession(headers={'User-Agent': UA})
 
     pbar = tqdm(total=len(imgs))
     jobs = [lookup_and_save(sess, p, sema_iqdb, sema_danbooru, pbar) for p in imgs]
@@ -239,8 +263,12 @@ def handle_gradio_req(src_dir, px_refresh_token, dd_api_key, dd_username):
 
 
 if __name__ == '__main__':
-    with open("private_dd.toml", "r") as f:
-         config = toml.load(f)
+    try:
+        with open("private_dd.toml", "r") as f:
+             config = toml.load(f)
+    except FileNotFoundError:
+        with open ("../../bin/credentials.toml", "r") as f:
+             config = toml.load(f)
 
     DD_API_KEY = config['danbooru_token']
     DD_USER_NAME = config['danbooru_username']
@@ -248,5 +276,5 @@ if __name__ == '__main__':
     args = get_args()
     LONG_SIDE = args.iqdb_long_side
     MD5_PREFER_FNAME = args.md5_prefer_fname
-    mypath = "D:\Andrew\Pictures\==train\\train4\px_2022_selected_1280.cmb"
+    mypath = r"D:\Andrew\Pictures\Grabber\twitter_saver_2223"
     asyncio.run(main(mypath, args.iqdb_concurrency, args.danbooru_concurrency, args.retry_nomatch))

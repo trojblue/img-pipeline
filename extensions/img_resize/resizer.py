@@ -7,6 +7,11 @@ from PIL import Image
 from tqdm.auto import tqdm
 
 
+"""
+===
+STATE: NOT FASTER THAN CPU, use gradio version instead
+===
+"""
 class ImageResizer:
     def __init__(self, src_dir: str, dst_dir: str, min_side: int):
         self.src_dir = src_dir
@@ -73,17 +78,17 @@ def do_resize_images_tr(src_dir: str, dst_dir: str, min_side: int, img_files: Li
     return dst_dir
 
 
+
 import os
 from typing import List
 import torch
 from torch.utils.data import Dataset, DataLoader
 from torchvision.io import read_image, write_jpeg
-from torchvision import transforms
-from PIL import Image
+from torchvision.transforms import Resize
 from tqdm import tqdm
 
 class ImageDataset(Dataset):
-    def __init__(self, src_dir, img_files):
+    def __init__(self, src_dir: str, img_files: List[str]):
         self.src_dir = src_dir
         self.img_files = img_files
 
@@ -93,69 +98,61 @@ class ImageDataset(Dataset):
     def __getitem__(self, idx):
         img_path = os.path.join(self.src_dir, self.img_files[idx])
         image = read_image(img_path)
-        image = image.unsqueeze(0)  # Add batch dimension
         return image, self.img_files[idx]
 
-class Resizer:
-    def __init__(self, src_dir: str, dst_dir: str, min_side: int, img_files: List[str] = None):
-        self.src_dir = src_dir
-        self.dst_dir = dst_dir
+class GPUImageResizer:
+    def __init__(self, in_dir: str, out_dir: str, min_side: int):
+        self.in_dir = in_dir
+        self.out_dir = out_dir
         self.min_side = min_side
-        self.img_files = img_files
 
-    def resize_images_gpu(self):
-        if not os.path.exists(self.dst_dir):
-            os.makedirs(self.dst_dir)
+        if not os.path.exists(self.out_dir):
+            os.makedirs(self.out_dir)
 
-        device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-
-        def resize_image_gpu(image: torch.Tensor, img_file: str) -> None:
-            image = image.float().to(device)
-
-            # Calculate new dimensions
-            width, height = image.shape[-1], image.shape[-2]
-            if width < height:
-                new_width = self.min_side
-                new_height = int(height * (self.min_side / width))
-            else:
-                new_height = self.min_side
-                new_width = int(width * (self.min_side / height))
-
-            # Apply Bicubic resize
-            resize_transform = transforms.Resize((new_height, new_width), interpolation=Image.BICUBIC, antialias=True)
-            resized_image = resize_transform(image)
-
-            # Convert float32 back to uint8
-            resized_image = torch.clamp(resized_image, 0, 255).to(torch.uint8)
-
-            # Save the resized image
-            output_path = os.path.join(self.dst_dir, img_file)
-            write_jpeg(resized_image, output_path)
-
-        if self.img_files is None:
-            self.img_files = [f for f in os.listdir(self.src_dir) if os.path.isfile(os.path.join(self.src_dir, f))]
-
-        dataset = ImageDataset(self.src_dir, self.img_files)
+    def resize_images(self):
+        img_files = [f for f in os.listdir(self.in_dir) if os.path.isfile(os.path.join(self.in_dir, f))]
+        dataset = ImageDataset(self.in_dir, img_files)
         batch_size = 8
         dataloader = DataLoader(dataset, batch_size=batch_size, num_workers=4)
 
-        for batch in tqdm(dataloader, total=len(dataloader)):
-            images = batch[0]
-            image_filenames = batch[1]
+        device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
+        for batch in tqdm(dataloader, total=len(dataloader)):
+            images, image_filenames = batch
             images = images.to(device)
+
+            resized_images = self.batch_resize(images)
+
             for i in range(images.size(0)):
-                resize_image_gpu(images[i], image_filenames[i])
+                output_path = os.path.join(self.out_dir, image_filenames[i])
+                write_jpeg(resized_images[i].cpu(), output_path)
+
+    def batch_resize(self, images: torch.Tensor) -> torch.Tensor:
+        images = images.float()
+
+        # Calculate new dimensions
+        widths, heights = images.shape[-1], images.shape[-2]
+        ratios = self.min_side / torch.minimum(widths, heights)
+        new_widths = (widths * ratios).int()
+        new_heights = (heights * ratios).int()
+
+        # Apply Bicubic resize
+        resize_transform = Resize((new_heights, new_widths), interpolation=3)
+        resized_images = resize_transform(images)
+
+        # Convert float32 back to uint8
+        resized_images = torch.clamp(resized_images, 0, 255).to(torch.uint8)
+
+        return resized_images
+
 
 
 def try_gpu():
-    src_dir = r"D:\Andrew\Pictures\Grabber\bench"
-    dst_dir = r"D:\Andrew\Pictures\Grabber\bench.out"
-    min_side = 1024
-    img_files = None  # Set this to a list of image filenames if you want to process specific images
-
-    resizer = Resizer(src_dir, dst_dir, min_side, img_files)
-    resizer.resize_images_gpu()
+    in_dir = r"D:\Andrew\Pictures\Grabber\bench"
+    out_dir = r"D:\Andrew\Pictures\Grabber\bench.out"
+    min_side = 256
+    resizer = GPUImageResizer(in_dir, out_dir, min_side)
+    resizer.resize_images()
 
 
 def try_cpu():
@@ -165,6 +162,6 @@ def try_cpu():
     do_resize_images_tr(src_dir, dst_dir, min_side)
 
 if __name__ == '__main__':
-    try_gpu()
+    try_cpu()
     # try_cpu()
 
