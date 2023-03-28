@@ -10,9 +10,12 @@ Prompting:
 - twitter prompt clean (for fitting in 1000 chars)
 - prompt SR quick replace
 
+Training:
+- reverse lookup
+- compress images
+
+
 Workflow orchestration:
 - Superresolution
 - gen collage
 
-Training:
-- reverse lookup

@@ -2,26 +2,17 @@ import gradio as gr
 from gradio import TabbedInterface
 import pyperclip
 from gradio.components import *
-from pages.img_collage_page import get_img_collage_page
-from pages.prompt_clean_page import get_prompt_clean_page
-from pages.prompt_shuffle_page import get_prompt_shuffle_page
-from pages.img_clean_page import get_img_clean_page
-from pages.prompt_gen_page import get_prompt_gen_page
-from pages.lstm_expand_page import get_lstm_expand_page
-from pages.img_lookup_page import get_img_lookup_page
-from pages.prompt_sr_page import get_prompt_sr_page
-from pages.img_compress_page import get_img_compress_page
-
+from lib.page_imports import *  # all pages
 
 
 def get_interface() -> TabbedInterface:
     # PROMPT
     prompt_inner_pages = [
         (get_prompt_gen_page(), "gen prompt"),
-        (get_prompt_sr_page(), "promptSR"),
         (get_prompt_clean_page(), "clean prompt"),
         (get_prompt_shuffle_page(), "shuffle tags"),
         (get_lstm_expand_page(), "lstm"),
+        (get_prompt_sr_page(), "promptSR"),
     ]
     Prompt_tabbed_interface = gr.TabbedInterface(
         [page[0] for page in prompt_inner_pages], [page[1] for page in prompt_inner_pages]
@@ -29,8 +20,9 @@ def get_interface() -> TabbedInterface:
 
     # TRAIN
     train_inner_pages = [
-        (get_img_compress_page(), "compress"),
-        (get_img_lookup_page(), "img_lookup_page"),
+        (get_img_download_page(), "Gelbooru Download"),
+        (get_img_compress_page(), "Image Resize"),
+        (get_img_lookup_page(), "Image Lookup"),
     ]
     Train_tabbed_interface = gr.TabbedInterface(
         [page[0] for page in train_inner_pages], [page[1] for page in train_inner_pages]

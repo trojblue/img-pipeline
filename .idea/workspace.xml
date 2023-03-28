@@ -6,8 +6,15 @@
   <component name="BlackConnectSettings" triggerOnReformat="true" />
   <component name="ChangeListManager">
     <list default="true" id="350e1de6-2e81-4b45-a68d-21f264864fa1" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/lib/page_imports.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pages/img_download_page.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/extensions/img_dedupe/dedupe_phash_v2.py" beforeDir="false" afterPath="$PROJECT_DIR$/extensions/img_dedupe/dedupe_phash_v2.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/extensions/img_downloader/gelbooru_downloader.py" beforeDir="false" afterPath="$PROJECT_DIR$/extensions/img_downloader/gelbooru_downloader.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/img_compress_page.py" beforeDir="false" afterPath="$PROJECT_DIR$/pages/img_compress_page.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/lstm_expand_page.py" beforeDir="false" afterPath="$PROJECT_DIR$/pages/lstm_expand_page.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/prompt_sr_page.py" beforeDir="false" afterPath="$PROJECT_DIR$/pages/prompt_sr_page.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -185,9 +192,9 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.app" />
         <item itemvalue="Python.dedupe_phash_v2" />
         <item itemvalue="Python.fetch_tags" />
-        <item itemvalue="Python.app" />
         <item itemvalue="Python.resizer" />
         <item itemvalue="Python.driver" />
       </list>
@@ -221,7 +228,7 @@
       <workItem from="1679319133321" duration="1000" />
       <workItem from="1679520504581" duration="23000" />
       <workItem from="1679520537615" duration="204000" />
-      <workItem from="1679938342250" duration="36768000" />
+      <workItem from="1679938342250" duration="39563000" />
     </task>
     <servers />
   </component>
@@ -298,11 +305,21 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/extensions/img_dedupe/dedupe_phash_v2.py</url>
-          <line>77</line>
+          <line>78</line>
           <option name="timeStamp" value="120" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/extensions/img_dedupe/dedupe_phash_v2.py</url>
+          <line>64</line>
+          <option name="timeStamp" value="121" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
+    <watches-manager>
+      <configuration name="PythonConfigurationType">
+        <watch expression="posts['post']" />
+      </configuration>
+    </watches-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/img_pipeline$dedupe_cupy_phash.coverage" NAME="dedupe_cupy_phash Coverage Results" MODIFIED="1679997466507" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/extensions/img_dedupe" />
@@ -318,7 +335,7 @@
     <SUITE FILE_PATH="coverage/img_pipeline$debug.coverage" NAME="debug Coverage Results" MODIFIED="1676973068221" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/img_pipeline$util.coverage" NAME="util Coverage Results" MODIFIED="1677974721244" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../expander" />
     <SUITE FILE_PATH="coverage/img_pipeline$gelbooru_downloader.coverage" NAME="gelbooru_downloader Coverage Results" MODIFIED="1679988064576" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/extensions/img_downloader" />
-    <SUITE FILE_PATH="coverage/img_pipeline$app.coverage" NAME="app Coverage Results" MODIFIED="1680000175640" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/img_pipeline$app.coverage" NAME="app Coverage Results" MODIFIED="1680028370084" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/img_pipeline$blip2_tagger.coverage" NAME="blip2_tagger Coverage Results" MODIFIED="1677949285356" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../expander" />
     <SUITE FILE_PATH="coverage/img_pipeline$lstm_expand.coverage" NAME="lstm_expand Coverage Results" MODIFIED="1677990401033" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/extensions/tag_expansion" />
     <SUITE FILE_PATH="coverage/img_pipeline$app2.coverage" NAME="app2 Coverage Results" MODIFIED="1677731036992" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/extensions/tag_expansion_transformers" />

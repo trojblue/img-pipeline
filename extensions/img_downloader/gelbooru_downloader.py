@@ -8,7 +8,7 @@ from tqdm import tqdm
 
 
 class GelbooruDownloader:
-    def __init__(self, search_strings, output_dir="output", max_num=1200, worker_num=4):
+    def __init__(self, search_strings, output_dir="output", max_num=1200, worker_num=4, save_tags=True):
         """
         :param search_strings: list of strings to search for
         :param output_dir: directory to save images to
@@ -19,6 +19,7 @@ class GelbooruDownloader:
         self.output_dir = output_dir
         self.max_num = max_num
         self.worker_num = worker_num
+        self.save_tags = save_tags  # todo
 
     def _create_output_path(self, artist, date, post_id, md5, ext):
         artist_dir = os.path.join(self.output_dir, artist)
@@ -103,10 +104,14 @@ class GelbooruDownloader:
                     progress_bar.update(1)
 
     def download_all(self):
+        start_time = datetime.now()
         for search_string in self.search_strings:
             all_posts = self._fetch_all_posts(search_string)
             self._download_all_posts(all_posts)
 
+        end_time = datetime.now()
+        return_str = f"Downloaded {len(self.search_strings)} images in {end_time - start_time}"
+        return return_str
 
 
 

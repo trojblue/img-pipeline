@@ -45,7 +45,7 @@ def get_lstm_expand_page():
     tag_count = gr.Slider(1, 100, label="tag count", value=10, step=1)
     line_count = gr.Number(label="lines count", value=1, precision=0)
     vital_tag_str = gr.TextArea(label= "vital_tag_str",
-                                  value="<lora:LoconLoraOffsetNoise_locon0501:1>",
+                                  placeholder="<lora:LoconLoraOffsetNoise_locon0501:1>",
                                 lines=2
                                   )
     bad_tag_str = gr.TextArea(placeholder="bad_tags", label= "bad tags",

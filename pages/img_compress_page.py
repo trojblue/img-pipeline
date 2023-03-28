@@ -16,9 +16,7 @@ def get_img_compress_page():
     cfg = load_configs()
 
     html = gr.HTML(
-        f"<p style='padding-bottom: 1em;' class=\"text-gray-500\">Process images in a directory on the same machine where the server is running."
-        + f"<br>输入图片目录, 把目录内所有图片压缩到指定大小, 保存到输出目录."
-        + f"<br>inplace: 压缩后的图片替换原图. (忽略输出目录)"
+        f"<p style='padding-bottom: 1em;' class=\"text-gray-500\">输入图片目录, 把目录内所有图片压缩到指定大小, 保存到输出目录."
           f"</p>"
         )
 
@@ -28,8 +26,8 @@ def get_img_compress_page():
             html,
             gr.Textbox(label="Input directory", placeholder="D:/train/in"),
             gr.Textbox(label="Output directory", ),
-            gr.Slider(0, 2000, value=1024, label="target_res"),
-            gr.Checkbox(label="inplace", value=False),
+            gr.Slider(0, 2000, value=1024, label="target_res", info="短边像素数"),
+            gr.Checkbox(label="inplace", value=False, info="是否覆盖原图 (忽略输出目录)"),
         ],
         outputs=[
             gr.TextArea(placeholder="stats")
