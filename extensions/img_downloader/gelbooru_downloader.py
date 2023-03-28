@@ -8,7 +8,13 @@ from tqdm import tqdm
 
 
 class GelbooruDownloader:
-    def __init__(self, search_strings, output_dir="output", max_num=9999999, worker_num=4):
+    def __init__(self, search_strings, output_dir="output", max_num=1200, worker_num=4):
+        """
+        :param search_strings: list of strings to search for
+        :param output_dir: directory to save images to
+        :param max_num: maximum number of images to download PER ARTIST
+        :param worker_num: number of workers to use for downloading
+        """
         self.search_strings = search_strings
         self.output_dir = output_dir
         self.max_num = max_num

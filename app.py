@@ -10,11 +10,12 @@ from pages.prompt_gen_page import get_prompt_gen_page
 from pages.lstm_expand_page import get_lstm_expand_page
 from pages.img_lookup_page import get_img_lookup_page
 from pages.prompt_sr_page import get_prompt_sr_page
+from pages.img_compress_page import get_img_compress_page
 
 
 
 def get_interface() -> TabbedInterface:
-    # Inner tabbed interface for "gen prompt" and "promptSR"
+    # PROMPT
     prompt_inner_pages = [
         (get_prompt_gen_page(), "gen prompt"),
         (get_prompt_sr_page(), "promptSR"),
@@ -26,13 +27,22 @@ def get_interface() -> TabbedInterface:
         [page[0] for page in prompt_inner_pages], [page[1] for page in prompt_inner_pages]
     )
 
+    # TRAIN
+    train_inner_pages = [
+        (get_img_compress_page(), "compress"),
+        (get_img_lookup_page(), "img_lookup_page"),
+    ]
+    Train_tabbed_interface = gr.TabbedInterface(
+        [page[0] for page in train_inner_pages], [page[1] for page in train_inner_pages]
+    )
+
 
     # Outer tabbed interface
     outer_pages = [
         (get_img_clean_page(), "upscale"),
-        (Prompt_tabbed_interface, "PROMPT"),
         (get_img_collage_page(), "gen collage"),
-        (get_img_lookup_page(), "img_lookup_page"),
+        (Prompt_tabbed_interface, "PROMPT"),
+        (Train_tabbed_interface, "TRAIN"),
     ]
 
     demo = gr.TabbedInterface(
